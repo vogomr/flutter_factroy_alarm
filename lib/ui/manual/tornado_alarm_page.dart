@@ -39,7 +39,7 @@ class _TornadoAlarmPageState extends State<TornadoAlarmPage> {
 
   @override
   Widget build(BuildContext context) {
-    final danger = const Color(0xFFB00020);
+    const danger = Color(0xFFB00020);
     return Scaffold(
       appBar: AppBar(
         title: const Text('TORNADO Alarm'),
