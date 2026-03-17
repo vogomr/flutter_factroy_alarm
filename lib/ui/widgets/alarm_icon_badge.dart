@@ -66,11 +66,6 @@ class AlarmIconBadge extends StatelessWidget {
 class _AlarmIconPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()..style = PaintingStyle.fill;
-    final strokePaint = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * 0.08;
-
     final centerX = size.width / 2;
     final centerY = size.height / 2;
     final scale = size.width / 100;

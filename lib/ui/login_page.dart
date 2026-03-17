@@ -66,11 +66,11 @@ class _LoginPageState extends State<LoginPage> {
           // Background gradient + grid texture
           Positioned.fill(
             child: DecoratedBox(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: const [Color(0xFFEFF3F8), Color(0xFFF9FBFE)],
+                  colors: [Color(0xFFEFF3F8), Color(0xFFF9FBFE)],
                 ),
               ),
               child: CustomPaint(

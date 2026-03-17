@@ -73,18 +73,18 @@ class _TornadoAlarmPageState extends State<TornadoAlarmPage> {
           children: [
             Card(
               color: danger.withValues(alpha: 0.1),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
+              child: const Padding(
+                padding: EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    const Icon(Icons.warning, color: danger, size: 48),
-                    const SizedBox(width: 16),
+                    Icon(Icons.warning, color: danger, size: 48),
+                    SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('Emergency Tornado Alarm', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: danger)),
-                          const Text('Use this only in case of emergency. This will play a loud repeating alarm.'),
+                          Text('Emergency Tornado Alarm', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: danger)),
+                          Text('Use this only in case of emergency. This will play a loud repeating alarm.'),
                         ],
                       ),
                     ),
