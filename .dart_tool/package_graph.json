@@ -10,8 +10,12 @@
         "flutter",
         "http",
         "intl",
+<<<<<<< HEAD
         "provider",
         "shared_preferences"
+=======
+        "provider"
+>>>>>>> 243cf39682a4504d85fcd8b091df3ea4836269d5
       ],
       "devDependencies": [
         "flutter_lints",
@@ -44,6 +48,7 @@
       ]
     },
     {
+<<<<<<< HEAD
       "name": "shared_preferences",
       "version": "2.5.4",
       "dependencies": [
@@ -57,6 +62,8 @@
       ]
     },
     {
+=======
+>>>>>>> 243cf39682a4504d85fcd8b091df3ea4836269d5
       "name": "intl",
       "version": "0.18.1",
       "dependencies": [
@@ -186,6 +193,7 @@
       ]
     },
     {
+<<<<<<< HEAD
       "name": "shared_preferences_windows",
       "version": "2.4.1",
       "dependencies": [
@@ -244,6 +252,8 @@
       ]
     },
     {
+=======
+>>>>>>> 243cf39682a4504d85fcd8b091df3ea4836269d5
       "name": "nested",
       "version": "1.0.0",
       "dependencies": [
@@ -340,6 +350,7 @@
       ]
     },
     {
+<<<<<<< HEAD
       "name": "path_provider_windows",
       "version": "2.3.0",
       "dependencies": [
@@ -392,6 +403,8 @@
       ]
     },
     {
+=======
+>>>>>>> 243cf39682a4504d85fcd8b091df3ea4836269d5
       "name": "typed_data",
       "version": "1.4.0",
       "dependencies": [
@@ -402,6 +415,7 @@
       "name": "vm_service",
       "version": "15.0.2",
       "dependencies": []
+<<<<<<< HEAD
     },
     {
       "name": "ffi",
@@ -420,6 +434,8 @@
         "meta",
         "path"
       ]
+=======
+>>>>>>> 243cf39682a4504d85fcd8b091df3ea4836269d5
     }
   ],
   "configVersion": 1

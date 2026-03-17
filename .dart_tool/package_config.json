@@ -38,6 +38,7 @@
       "languageVersion": "3.3"
     },
     {
+<<<<<<< HEAD
       "name": "ffi",
       "rootUri": "file:///C:/Users/minwin/AppData/Local/Pub/Cache/hosted/pub.dev/ffi-2.2.0",
       "packageUri": "lib/",
@@ -50,6 +51,8 @@
       "languageVersion": "3.0"
     },
     {
+=======
+>>>>>>> 243cf39682a4504d85fcd8b091df3ea4836269d5
       "name": "flutter",
       "rootUri": "file:///C:/flutter/src/flutter/packages/flutter",
       "packageUri": "lib/",
@@ -68,12 +71,15 @@
       "languageVersion": "3.8"
     },
     {
+<<<<<<< HEAD
       "name": "flutter_web_plugins",
       "rootUri": "file:///C:/flutter/src/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.8"
     },
     {
+=======
+>>>>>>> 243cf39682a4504d85fcd8b091df3ea4836269d5
       "name": "http",
       "rootUri": "file:///C:/Users/minwin/AppData/Local/Pub/Cache/hosted/pub.dev/http-1.6.0",
       "packageUri": "lib/",
@@ -146,6 +152,7 @@
       "languageVersion": "3.4"
     },
     {
+<<<<<<< HEAD
       "name": "path_provider_linux",
       "rootUri": "file:///C:/Users/minwin/AppData/Local/Pub/Cache/hosted/pub.dev/path_provider_linux-2.2.1",
       "packageUri": "lib/",
@@ -176,12 +183,15 @@
       "languageVersion": "3.0"
     },
     {
+=======
+>>>>>>> 243cf39682a4504d85fcd8b091df3ea4836269d5
       "name": "provider",
       "rootUri": "file:///C:/Users/minwin/AppData/Local/Pub/Cache/hosted/pub.dev/provider-6.1.5+1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
     {
+<<<<<<< HEAD
       "name": "shared_preferences",
       "rootUri": "file:///C:/Users/minwin/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences-2.5.4",
       "packageUri": "lib/",
@@ -224,6 +234,8 @@
       "languageVersion": "3.3"
     },
     {
+=======
+>>>>>>> 243cf39682a4504d85fcd8b091df3ea4836269d5
       "name": "sky_engine",
       "rootUri": "file:///C:/flutter/src/flutter/bin/cache/pkg/sky_engine",
       "packageUri": "lib/",
@@ -290,12 +302,15 @@
       "languageVersion": "3.4"
     },
     {
+<<<<<<< HEAD
       "name": "xdg_directories",
       "rootUri": "file:///C:/Users/minwin/AppData/Local/Pub/Cache/hosted/pub.dev/xdg_directories-1.1.0",
       "packageUri": "lib/",
       "languageVersion": "3.3"
     },
     {
+=======
+>>>>>>> 243cf39682a4504d85fcd8b091df3ea4836269d5
       "name": "flutter_factory_alarm",
       "rootUri": "../",
       "packageUri": "lib/",
