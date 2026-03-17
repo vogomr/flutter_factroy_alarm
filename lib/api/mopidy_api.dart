@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 
 import '../config.dart'; // <-- make sure this exists and has AppConfig.mopidyBaseUrl
+import 'mopidy_rpc_transport_stub.dart'
+  if (dart.library.html) 'mopidy_rpc_transport_web.dart' as rpc_transport;
 
 /// Mopidy JSON-RPC helper.
 /// Option B (same-origin through Nginx): set AppConfig.mopidyBaseUrl = '' so calls go to /mopidy/rpc
@@ -22,6 +23,12 @@ class MopidyAPI {
 
   Uri _rpcUri() => Uri.parse('$base/mopidy/rpc');
 
+  void _throwIfRpcError(dynamic json) {
+    if (json is Map<String, dynamic> && json['error'] != null) {
+      throw Exception('Mopidy RPC error: ${json['error']}');
+    }
+  }
+
   Future<void> _rpc(String method, {Map<String, dynamic>? params}) async {
     final payload = {
       'jsonrpc': '2.0',
@@ -29,14 +36,12 @@ class MopidyAPI {
       'method': method,
       if (params != null) 'params': params,
     };
-    final r = await http.post(
-      _rpcUri(),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(payload),
-    );
-    if (r.statusCode != 200) {
-      throw Exception('Mopidy RPC failed: ${r.statusCode} ${r.body}');
+    final response = await rpc_transport.postJson(_rpcUri(), payload);
+    if (response.statusCode != 200) {
+      throw Exception('Mopidy RPC failed: ${response.statusCode} ${response.body}');
     }
+    final json = jsonDecode(response.body);
+    _throwIfRpcError(json);
   }
 
   /// Helper that returns the parsed JSON `result` field.
@@ -47,15 +52,12 @@ class MopidyAPI {
       'method': method,
       if (params != null) 'params': params,
     };
-    final r = await http.post(
-      _rpcUri(),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(payload),
-    );
-    if (r.statusCode != 200) {
-      throw Exception('Mopidy RPC failed: ${r.statusCode} ${r.body}');
+    final response = await rpc_transport.postJson(_rpcUri(), payload);
+    if (response.statusCode != 200) {
+      throw Exception('Mopidy RPC failed: ${response.statusCode} ${response.body}');
     }
-    final json = jsonDecode(r.body);
+    final json = jsonDecode(response.body);
+    _throwIfRpcError(json);
     return json['result'];
   }
 
@@ -74,9 +76,10 @@ class MopidyAPI {
 
   /// Convenience: play a local file (by filename under media_dir)
   Future<void> playTone(String filename, {int? volume}) async {
+    final uri = Uri.file('${AppConfig.mopidyMediaDir}/$filename').toString();
     if (volume != null) await setVolume(volume);
     await clear();
-    await add('local:track:$filename');
+    await add(uri);
     await play();
   }
 

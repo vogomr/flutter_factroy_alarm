@@ -16,4 +16,10 @@
 class AppConfig {
   // Use the same-origin Mopidy proxy provided by Nginx
   static const String mopidyBaseUrl = '';
+
+  // Use the same-origin schedule API provided by Nginx.
+  static const String scheduleBaseUrl = '';
+
+  // Mopidy media_dir on the server where alarm tones are stored.
+  static const String mopidyMediaDir = '/var/lib/mopidy/media';
 }

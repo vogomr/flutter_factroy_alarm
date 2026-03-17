@@ -12,6 +12,7 @@ class _TornadoAlarmPageState extends State<TornadoAlarmPage> {
   bool _repeat = true;  // loop by default
 
   Future<void> _start() async {
+    if (!mounted) return;
     final ok = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
@@ -24,17 +25,37 @@ class _TornadoAlarmPageState extends State<TornadoAlarmPage> {
       ),
     );
     if (ok != true) return;
-    await mopidy.setRepeat(_repeat);
-    await mopidy.playTone('tornado_alarm.wav', volume: _volume.round());
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Tornado alarm started ${_repeat ? "(repeating)" : ""}')),
-    );
+    try {
+      await mopidy.setRepeat(_repeat);
+      await mopidy.playTone('tornado_alarm.wav', volume: _volume.round());
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Tornado alarm started ${_repeat ? "(repeating)" : ""}')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Start failed: $e'),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
+    }
   }
 
   Future<void> _stop() async {
-    await mopidy.setRepeat(false);
-    await mopidy.stop();
+    try {
+      await mopidy.setRepeat(false);
+      await mopidy.stop();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Stop failed: $e'),
+          backgroundColor: Colors.red.shade700,
+        ),
+      );
+    }
   }
 
   @override
@@ -50,12 +71,35 @@ class _TornadoAlarmPageState extends State<TornadoAlarmPage> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
+            Card(
+              color: danger.withValues(alpha: 0.1),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    const Icon(Icons.warning, color: danger, size: 48),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text('Emergency Tornado Alarm', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: danger)),
+                          const Text('Use this only in case of emergency. This will play a loud repeating alarm.'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
             SwitchListTile(
               value: _repeat,
               onChanged: (v)=>setState(()=>_repeat=v),
               title: const Text('Repeat (loop)'),
               subtitle: const Text('If ON, the tone loops until STOP is pressed'),
             ),
+            const SizedBox(height: 20),
             Row(
               children: [
                 const Icon(Icons.volume_up),

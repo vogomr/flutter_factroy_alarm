@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'ui/login_page.dart';
 import 'ui/home_page.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final loggedIn = prefs.getBool('is_logged_in') ?? false;
+  runApp(MyApp(initialRoute: loggedIn ? '/home' : '/login'));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key, required this.initialRoute});
+
+  final String initialRoute;
 
   @override
   Widget build(BuildContext context) {
-    final base = ThemeData.dark(useMaterial3: true);
+    final base = ThemeData.light(useMaterial3: true);
     const kScale = 1.15;
 
     // Helper to scale a single style safely
@@ -23,11 +30,11 @@ class MyApp extends StatelessWidget {
       title: 'Factory Alarm Controller',
       theme: base.copyWith(
         colorScheme: base.colorScheme.copyWith(
-          primary: const Color(0xFF0B5FFF),
-          secondary: Colors.orange,
-          surface: const Color(0xFF101418),
+          primary: Colors.red,
+          secondary: Colors.orangeAccent,
+          surface: Colors.white,
           error: const Color(0xFFB00020),
-          onSurface: Colors.white,
+          onSurface: Colors.black,
         ),
         // Scale only known styles; leave others untouched to avoid assertions.
         textTheme: base.textTheme.copyWith(
@@ -60,7 +67,11 @@ class MyApp extends StatelessWidget {
           showCloseIcon: true,
         ),
       ),
-      home: const HomePage(),
+      initialRoute: initialRoute,
+      routes: {
+        '/login': (_) => const LoginPage(),
+        '/home': (_) => const HomePage(),
+      },
     );
   }
 }

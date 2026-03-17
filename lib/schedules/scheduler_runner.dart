@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:intl/intl.dart';
 import '../api/mopidy_api.dart';
 import 'weekly_models.dart';
 
@@ -14,7 +13,8 @@ class SchedulerRunner {
   final MopidyAPI mopidy;
   WeeklySchedule schedule;
   Timer? _timer;
-  String? _lastFiredKey; // e.g., mon|12:00|lunch
+  final Set<String> _firedKeys = <String>{};
+  String? _lastMinute;
 
   SchedulerRunner({required this.mopidy, required this.schedule});
 
@@ -30,27 +30,42 @@ class SchedulerRunner {
 
   void update(WeeklySchedule ws) {
     schedule = ws;
-    _lastFiredKey = null;
+    _firedKeys.clear();
+    _lastMinute = null;
   }
 
   void _tick() {
     final now = DateTime.now();
-    final day = DateFormat('E').format(now).toLowerCase().substring(0,3); // mon..sun
-    final hhmm = DateFormat('HH:mm').format(now);
+    final day = DayNames.days[now.weekday - 1];
+    final hhmm = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
     final set = schedule.days[day];
     if (set == null) return;
 
-    _maybeFire(day, hhmm, 'break', set.breakTime);
-    _maybeFire(day, hhmm, 'lunch', set.lunchTime);
-    _maybeFire(day, hhmm, 'shift', set.shiftTime);
+    if (_lastMinute != hhmm) {
+      _lastMinute = hhmm;
+      _firedKeys.clear();
+    }
+
+    for (var index = 0; index < set.slots.length; index++) {
+      final slot = set.slots[index];
+      _maybeFire(day, hhmm, slot.type, slot.start, index, 'start');
+      _maybeFire(day, hhmm, slot.type, slot.end, index, 'end');
+    }
   }
 
-  Future<void> _maybeFire(String day, String hhmm, String kind, String time) async {
+  Future<void> _maybeFire(
+    String day,
+    String hhmm,
+    String kind,
+    String time,
+    int index,
+    String edge,
+  ) async {
     if (time.isEmpty) return;
     if (time != hhmm) return;
-    final key = '$day|$hhmm|$kind';
-    if (_lastFiredKey == key) return; // prevent re-fire this minute
-    _lastFiredKey = key;
+    final key = '$day|$hhmm|$kind|$index|$edge';
+    if (_firedKeys.contains(key)) return;
+    _firedKeys.add(key);
 
     final tone = kEventTones[kind];
     if (tone == null) return;

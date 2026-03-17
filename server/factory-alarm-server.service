@@ -1,0 +1,28 @@
+[Unit]
+Description=Factory Alarm Schedule Server
+After=network-online.target nss-lookup.target mopidy.service
+Wants=network-online.target nss-lookup.target
+
+[Service]
+Type=simple
+User=__SERVICE_USER__
+WorkingDirectory=/opt/factory_alarm
+ExecStartPre=/bin/sh -c 'until getent hosts api.weather.gov >/dev/null 2>&1; do sleep 2; done'
+ExecStart=/usr/bin/python3 /opt/factory_alarm/factory_alarm_server.py
+Restart=always
+RestartSec=3
+Environment=FACTORY_ALARM_STATE_DIR=/var/lib/factory_alarm
+Environment=FACTORY_ALARM_SCHEDULE_PATH=/var/lib/factory_alarm/schedule.json
+Environment=FACTORY_ALARM_MOPIDY_RPC_URL=http://127.0.0.1:6680/mopidy/rpc
+Environment=FACTORY_ALARM_BIND_HOST=127.0.0.1
+Environment=FACTORY_ALARM_BIND_PORT=8787
+Environment=FACTORY_ALARM_PLAY_SECONDS=20
+Environment=FACTORY_ALARM_WEATHER_ENABLED=false
+Environment=FACTORY_ALARM_WEATHER_LAT=
+Environment=FACTORY_ALARM_WEATHER_LON=
+Environment=FACTORY_ALARM_WEATHER_POLL_SECONDS=60
+Environment=FACTORY_ALARM_WEATHER_EVENT=Tornado Warning
+Environment=FACTORY_ALARM_WEATHER_USER_AGENT=FactoryAlarm/1.0 (admin01@localhost)
+
+[Install]
+WantedBy=multi-user.target

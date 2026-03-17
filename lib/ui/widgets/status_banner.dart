@@ -36,22 +36,24 @@ class _StatusBannerState extends State<StatusBanner> {
     final bg = online ? Colors.green.shade800 : Colors.red.shade800;
     final icon = online ? Icons.cloud_done : Icons.cloud_off;
     final text = online ? 'ONLINE' : 'OFFLINE';
-    return Container(
-      width: double.infinity,
+    return Card(
       color: bg,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.white),
-          const SizedBox(width: 12),
-          Text(text, style: const TextStyle(fontWeight: FontWeight.w800)),
-          const SizedBox(width: 24),
-          const Icon(Icons.music_note, color: Colors.white70),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text('Now Playing: $now', overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white)),
-          ),
-        ],
+      margin: const EdgeInsets.all(16),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            Icon(icon, color: Colors.white, size: 28),
+            const SizedBox(width: 12),
+            Text(text, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+            const SizedBox(width: 24),
+            const Icon(Icons.music_note, color: Colors.white70, size: 24),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text('Now Playing: $now', overflow: TextOverflow.ellipsis, style: const TextStyle(color: Colors.white, fontSize: 14)),
+            ),
+          ],
+        ),
       ),
     );
   }
