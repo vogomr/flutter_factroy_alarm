@@ -44,16 +44,16 @@ class AlarmTile extends StatelessWidget {
           splashColor: color.withValues(alpha: 0.2),
           highlightColor: color.withValues(alpha: 0.08),
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 26, horizontal: 12),
+            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  radius: 28,
+                  radius: 22,
                   backgroundColor: color.withValues(alpha: 0.16),
-                  child: Icon(icon, color: color, size: 28),
+                  child: Icon(icon, color: color, size: 22),
                 ),
-                const SizedBox(height: 14),
+                const SizedBox(height: 8),
                 Text(
                   label.toUpperCase(),
                   textAlign: TextAlign.center,

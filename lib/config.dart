@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 // lib/config.dart
 //
 // OPTION B: Same-origin proxy on the Raspberry Pi
@@ -14,11 +16,15 @@
 // which Nginx will forward to Mopidy on localhost:6680.
 
 class AppConfig {
-  // Use the same-origin Mopidy proxy provided by Nginx
-  static const String mopidyBaseUrl = '';
+  // Web: same-origin through Nginx. Mobile/Desktop: direct to server IP.
+  static const String mopidyBaseUrl = kIsWeb ? '' : 'http://10.1.98.26';
 
-  // Use the same-origin schedule API provided by Nginx.
-  static const String scheduleBaseUrl = '';
+  // Web: same-origin through Nginx. Mobile/Desktop: direct to server IP.
+  static const String scheduleBaseUrl = kIsWeb ? '' : 'http://10.1.98.26';
+
+  // Web uses the nginx proxy path, mobile hits the Python server directly.
+  static const String healthUrl =
+      kIsWeb ? '/health/schedule' : 'http://10.1.98.26/health';
 
   // Mopidy media_dir on the server where alarm tones are stored.
   static const String mopidyMediaDir = '/var/lib/mopidy/media';

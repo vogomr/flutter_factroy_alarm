@@ -11,6 +11,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  static const _sessionStartedAtKey = 'session_started_at_ms';
   final _userCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -31,6 +32,7 @@ class _LoginPageState extends State<LoginPage> {
     if (_userCtrl.text.trim() == 'admin01' && _passCtrl.text == '123456') {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('is_logged_in', _rememberMe);
+      await prefs.setInt(_sessionStartedAtKey, DateTime.now().millisecondsSinceEpoch);
       if (!mounted) return;
       setState(() {
         _loading = false;

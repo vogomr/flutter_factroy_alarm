@@ -25,7 +25,7 @@ SCHEDULE_PATH = Path(os.environ.get('FACTORY_ALARM_SCHEDULE_PATH', str(STATE_DIR
 MOPIDY_RPC_URL = os.environ.get('FACTORY_ALARM_MOPIDY_RPC_URL', 'http://127.0.0.1:6680/mopidy/rpc')
 BIND_HOST = os.environ.get('FACTORY_ALARM_BIND_HOST', '127.0.0.1')
 BIND_PORT = int(os.environ.get('FACTORY_ALARM_BIND_PORT', '8787'))
-PLAY_SECONDS = int(os.environ.get('FACTORY_ALARM_PLAY_SECONDS', '20'))
+PLAY_TIMES = int(os.environ.get('FACTORY_ALARM_PLAY_TIMES', '3'))
 WEATHER_ENABLED = os.environ.get('FACTORY_ALARM_WEATHER_ENABLED', 'false').lower() in ('1', 'true', 'yes', 'on')
 WEATHER_LAT = os.environ.get('FACTORY_ALARM_WEATHER_LAT', '').strip()
 WEATHER_LON = os.environ.get('FACTORY_ALARM_WEATHER_LON', '').strip()
@@ -118,13 +118,13 @@ def mopidy_rpc(method: str, params: dict[str, Any] | None = None) -> Any:
     return parsed.get('result')
 
 
-def play_tone_for(filename: str, seconds: int) -> None:
+def play_tone_times(filename: str, times: int) -> None:
     tone_uri = f'file:///var/lib/mopidy/media/{filename}'
+    mopidy_rpc('core.tracklist.set_repeat', {'value': False})
     mopidy_rpc('core.tracklist.clear')
-    mopidy_rpc('core.tracklist.add', {'uris': [tone_uri]})
+    for _ in range(max(1, times)):
+        mopidy_rpc('core.tracklist.add', {'uris': [tone_uri]})
     mopidy_rpc('core.playback.play')
-    time.sleep(seconds)
-    mopidy_rpc('core.playback.stop')
 
 
 def has_active_weather_event() -> bool:
@@ -310,8 +310,8 @@ class ScheduleRuntime:
     def _play_slot(self, event_type: str, edge: str) -> None:
         tone = EVENT_TONES[event_type]
         try:
-            play_tone_for(tone, PLAY_SECONDS)
-            print(f'Played {event_type} ({edge}) -> {tone}', flush=True)
+            play_tone_times(tone, PLAY_TIMES)
+            print(f'Played {event_type} ({edge}) -> {tone} x{PLAY_TIMES}', flush=True)
         except Exception as exc:
             print(f'Failed to play {event_type} ({edge}): {exc}', flush=True)
 

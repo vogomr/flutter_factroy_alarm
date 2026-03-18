@@ -1,1 +1,0 @@
-:  D:\\flutterapps\\flutter_factory_alarm\\web\\index.html

@@ -4,7 +4,7 @@ import 'weekly_models.dart';
 
 /// Map event -> tone filename (adjust names to your media files as needed).
 const Map<String, String> kEventTones = {
-  'break': 'energy_alarm.wav',
+  'break': 'lunch_bell.wav',
   'lunch': 'lunch_bell.wav',
   'shift': 'shift_change.wav',
 };
@@ -49,7 +49,6 @@ class SchedulerRunner {
     for (var index = 0; index < set.slots.length; index++) {
       final slot = set.slots[index];
       _maybeFire(day, hhmm, slot.type, slot.start, index, 'start');
-      _maybeFire(day, hhmm, slot.type, slot.end, index, 'end');
     }
   }
 
@@ -70,7 +69,7 @@ class SchedulerRunner {
     final tone = kEventTones[kind];
     if (tone == null) return;
     try {
-      await mopidy.playToneFor(tone, seconds: 20); // play for 20 seconds
+      await mopidy.playToneTimes(tone, times: 3); // play 3 times sequentially
     } catch (_) {/* ignore in dev */}
   }
 }

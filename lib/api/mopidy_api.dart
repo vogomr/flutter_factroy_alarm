@@ -89,6 +89,18 @@ class MopidyAPI {
     unawaited(Future.delayed(Duration(seconds: seconds), () => stop()));
   }
 
+  /// Queue a file [times] times in the tracklist so Mopidy plays it sequentially.
+  Future<void> playToneTimes(String filename, {int? volume, int times = 3}) async {
+    final uri = Uri.file('${AppConfig.mopidyMediaDir}/$filename').toString();
+    if (volume != null) await setVolume(volume);
+    await setRepeat(false);
+    await clear();
+    for (var i = 0; i < times; i++) {
+      await add(uri);
+    }
+    await play();
+  }
+
   /// Lightweight "ping" + optional now-playing.
   Future<MopidyStatus> getStatus() async {
     try {

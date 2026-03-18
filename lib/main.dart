@@ -5,9 +5,22 @@ import 'ui/login_page.dart';
 import 'ui/home_page.dart';
 
 Future<void> main() async {
+  const sessionStartedAtKey = 'session_started_at_ms';
+  const sessionDuration = Duration(minutes: 10);
+
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
-  final loggedIn = prefs.getBool('is_logged_in') ?? false;
+  var loggedIn = prefs.getBool('is_logged_in') ?? false;
+  if (loggedIn) {
+    final startedAtMs = prefs.getInt(sessionStartedAtKey);
+    final nowMs = DateTime.now().millisecondsSinceEpoch;
+    final expired = startedAtMs == null || nowMs - startedAtMs >= sessionDuration.inMilliseconds;
+    if (expired) {
+      loggedIn = false;
+      await prefs.setBool('is_logged_in', false);
+      await prefs.remove(sessionStartedAtKey);
+    }
+  }
   runApp(MyApp(initialRoute: loggedIn ? '/home' : '/login'));
 }
 
@@ -58,7 +71,7 @@ class MyApp extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.white,
             textStyle: const TextStyle(fontWeight: FontWeight.w700),
-            minimumSize: const Size(200, 100),
+            minimumSize: const Size(88, 48),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
         ),

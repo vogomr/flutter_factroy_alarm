@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../config.dart';
 import '../api/mopidy_api.dart';
 import 'manual/tornado_alarm_page.dart';
 import 'schedules_page.dart';
@@ -13,28 +14,68 @@ import 'package:http/http.dart' as http;
 class HomePage extends StatefulWidget { const HomePage({super.key}); @override State<HomePage> createState() => _HomePageState(); }
 
 class _HomePageState extends State<HomePage> {
+  static const _sessionStartedAtKey = 'session_started_at_ms';
+  static const _sessionDuration = Duration(minutes: 10);
+
   final mopidy = MopidyAPI();
   bool busy = false;
   bool systemLive = false;
   String? activeAlarm;
   Timer? _healthTimer;
+  Timer? _sessionTimer;
 
   @override
   void initState() {
     super.initState();
     _checkHealth();
     _healthTimer = Timer.periodic(const Duration(seconds: 30), (_) => _checkHealth());
+    _setupAutoLogout();
   }
 
   @override
   void dispose() {
     _healthTimer?.cancel();
+    _sessionTimer?.cancel();
     super.dispose();
+  }
+
+  Future<void> _setupAutoLogout() async {
+    final prefs = await SharedPreferences.getInstance();
+    final startedAtMs = prefs.getInt(_sessionStartedAtKey);
+    final nowMs = DateTime.now().millisecondsSinceEpoch;
+
+    if (startedAtMs == null) {
+      await _forceLogout();
+      return;
+    }
+
+    final elapsedMs = nowMs - startedAtMs;
+    if (elapsedMs >= _sessionDuration.inMilliseconds) {
+      await _forceLogout();
+      return;
+    }
+
+    final remainingMs = _sessionDuration.inMilliseconds - elapsedMs;
+    _sessionTimer?.cancel();
+    _sessionTimer = Timer(Duration(milliseconds: remainingMs), () async {
+      await _forceLogout();
+    });
+  }
+
+  Future<void> _forceLogout() async {
+    _sessionTimer?.cancel();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('is_logged_in', false);
+    await prefs.remove(_sessionStartedAtKey);
+    if (!mounted) return;
+    Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
   }
 
   Future<void> _checkHealth() async {
     try {
-      final res = await http.get(Uri.parse('/health')).timeout(const Duration(seconds: 5));
+      final res = await http
+          .get(Uri.parse(AppConfig.healthUrl))
+          .timeout(const Duration(seconds: 5));
       if (mounted) setState(() => systemLive = res.statusCode == 200);
     } catch (_) {
       if (mounted) setState(() => systemLive = false);
@@ -48,7 +89,6 @@ class _HomePageState extends State<HomePage> {
       await mopidy.playTone(file);
       setState(() => activeAlarm = alarmType);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Playing: $file')));
       // Reset active alarm after 5 seconds
       Future.delayed(const Duration(seconds: 5), () {
         if (mounted) setState(() => activeAlarm = null);
@@ -87,6 +127,7 @@ class _HomePageState extends State<HomePage> {
     if (shouldLogout == true && mounted) {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool('is_logged_in', false);
+      await prefs.remove(_sessionStartedAtKey);
       if (!mounted) return;
       Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
     }
@@ -98,7 +139,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80),
+        preferredSize: Size.fromHeight(isNarrowTopBar ? 58 : 76),
         child: Container(
           decoration: const BoxDecoration(
             color: Colors.white,
@@ -112,7 +153,7 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 children: [
                   // Alarm icon badge
-                  const AlarmIconBadge(size: 60, animated: false),
+                  AlarmIconBadge(size: isNarrowTopBar ? 38 : 54, animated: false),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Column(
@@ -122,7 +163,10 @@ class _HomePageState extends State<HomePage> {
                         Text(
                           'Alarm Controller',
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
+                          style: (isNarrowTopBar
+                              ? Theme.of(context).textTheme.titleMedium
+                              : Theme.of(context).textTheme.headlineSmall)
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         if (!isNarrowTopBar)
                           Text(
@@ -263,7 +307,9 @@ class _HomePageState extends State<HomePage> {
                           const SizedBox(height: 20),
 
                           // Footer bar
-                          Wrap(
+                          SafeArea(
+                            top: false,
+                            child: Wrap(
                             spacing: 16,
                             runSpacing: 12,
                             alignment: WrapAlignment.center,
@@ -275,7 +321,7 @@ class _HomePageState extends State<HomePage> {
                                   icon: const Icon(Icons.schedule, size: 18),
                                   label: const Text('Schedule Setting'),
                                   style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 18),
+                                    padding: EdgeInsets.symmetric(vertical: isSmall ? 10 : 16),
                                     backgroundColor: Colors.white,
                                     foregroundColor: Colors.black,
                                     elevation: 0,
@@ -291,13 +337,14 @@ class _HomePageState extends State<HomePage> {
                                   icon: const Icon(Icons.warning, size: 18),
                                   label: const Text('Manual Tornado'),
                                   style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(vertical: 18),
+                                    padding: EdgeInsets.symmetric(vertical: isSmall ? 10 : 16),
                                     backgroundColor: Colors.red,
                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                                   ),
                                 ),
                               ),
                             ],
+                          ),
                           ),
                         ],
                       ),

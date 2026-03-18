@@ -67,7 +67,8 @@ class _TornadoAlarmPageState extends State<TornadoAlarmPage> {
         backgroundColor: danger,
         actions: [ IconButton(onPressed: _stop, icon: const Icon(Icons.stop)) ],
       ),
-      body: Padding(
+      body: SafeArea(
+        child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
@@ -119,10 +120,10 @@ class _TornadoAlarmPageState extends State<TornadoAlarmPage> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: danger, foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 22),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
                 onPressed: _start,
-                child: const Text('START TORNADO ALARM', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+                child: const Text('START TORNADO ALARM', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
               ),
             ),
             const SizedBox(height: 10),
@@ -131,13 +132,15 @@ class _TornadoAlarmPageState extends State<TornadoAlarmPage> {
               child: OutlinedButton.icon(
                 icon: const Icon(Icons.stop),
                 label: const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 14),
+                  padding: EdgeInsets.symmetric(vertical: 8),
                   child: Text('STOP'),
                 ),
                 onPressed: _stop,
               ),
             ),
+            const SizedBox(height: 8),
           ],
+        ),
         ),
       ),
     );

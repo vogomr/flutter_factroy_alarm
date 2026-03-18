@@ -1,6 +1,5 @@
+import 'dart:io';
 import 'dart:convert';
-
-import 'package:http/http.dart' as http;
 
 class RpcResponse {
   final int statusCode;
@@ -10,11 +9,16 @@ class RpcResponse {
 }
 
 Future<RpcResponse> postJson(Uri uri, Object payload) async {
-  final response = await http.post(
-    uri,
-    headers: const {'Content-Type': 'application/json'},
-    body: jsonEncode(payload),
-  );
+  final client = HttpClient();
+  try {
+    final request = await client.postUrl(uri);
+    request.headers.set(HttpHeaders.contentTypeHeader, 'application/json');
+    request.write(jsonEncode(payload));
 
-  return RpcResponse(statusCode: response.statusCode, body: response.body);
+    final response = await request.close();
+    final body = await utf8.decoder.bind(response).join();
+    return RpcResponse(statusCode: response.statusCode, body: body);
+  } finally {
+    client.close(force: true);
+  }
 }

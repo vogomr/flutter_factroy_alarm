@@ -3,7 +3,6 @@
 // Generated file. Do not edit.
 //
 
-<<<<<<< HEAD
 // @dart = 2.13
 // ignore_for_file: type=lint
 
@@ -15,8 +14,3 @@ void registerPlugins([final Registrar? pluginRegistrar]) {
   SharedPreferencesPlugin.registerWith(registrar);
   registrar.registerMessageHandler();
 }
-=======
-// ignore_for_file: type=lint
-
-void registerPlugins() {}
->>>>>>> 243cf39682a4504d85fcd8b091df3ea4836269d5
